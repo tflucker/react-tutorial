@@ -15,29 +15,28 @@ class Board extends React.Component {
     renderSquare(i) {
         return (
             <Square
+                key={"square " + i} 
                 value={this.props.squares[i]}
                 onClick={() => this.props.onClick(i)}
             />
         );
     }
+    renderSquares(n) {
+        let squares = [];
+        for(let i = n; i < n + 3; i++){
+            squares.push(this.renderSquare(i));
+        }
+        return squares;
+    }
+    renderRows(i){
+        return <div className="board-row">{this.renderSquares(i)}</div>;
+    }
     render() {
         return (
             <div>
-                <div className="board-row">
-                    {this.renderSquare(0)}
-                    {this.renderSquare(1)}
-                    {this.renderSquare(2)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(3)}
-                    {this.renderSquare(4)}
-                    {this.renderSquare(5)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(6)}
-                    {this.renderSquare(7)}
-                    {this.renderSquare(8)}
-                </div>
+                {this.renderRows(0)}
+                {this.renderRows(3)}
+                {this.renderRows(6)}
             </div>
         );
     }
@@ -52,6 +51,7 @@ class Game extends React.Component {
             }],
             stepNumber: 0,
             xIsNext: true,
+            isDescending: true
         };
     }
     handleClick(i) {
@@ -89,6 +89,11 @@ class Game extends React.Component {
             xIsNext: (step % 2) === 0,
         });
     }
+    sortHistory(){
+        this.setState({
+            isDescending: !this.state.isDescending
+        })
+    }
     render() {
         const history = this.state.history;
         const current = history[this.state.stepNumber];
@@ -124,7 +129,8 @@ class Game extends React.Component {
                 </div>
                 <div className="game-info">
                     <div>{status}</div>
-                    <ol>{moves}</ol>
+                    <div><button onClick={() => this.sortHistory()}>Sort By: {this.state.isDescending ? "Descending" : "Ascending"}</button></div>
+                    <ol>{this.state.isDescending ? moves: moves.reverse()}</ol>
                 </div>
             </div>
         );
